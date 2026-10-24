@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <link rel="icon" href="assets/شعار.png" type="image/png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منيو أسرة خالد بن الوليد</title>
+    <link href="https://fonts.googleapis.com/css2?family=Almarai:wght@400;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --dark: #2d2d2d;
+            --gold: #fdb833;
+            --white: #ffffff;
+            --light-bg: #f4f4f4;
+            --whatsapp: #25D366;
+            --danger: #e74c3c;
+            --grey: #95a5a6;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Almarai', sans-serif; background-color: var(--light-bg); color: var(--dark); overflow-x: hidden; }
+
+        /* حاوية التنبيهات */
+        #notification-container {
+            position: fixed; top: 20px; left: 20px; z-index: 9999;
+            display: flex; flex-direction: column; gap: 10px;
+        }
+        .notif {
+            background: var(--dark); color: var(--gold);
+            padding: 12px 20px; border-radius: 8px; border-right: 5px solid var(--gold);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3); animation: slideIn 0.4s forwards;
+            font-size: 0.85rem; min-width: 180px;
+        }
+        @keyframes slideIn { from { transform: translateX(-120%); } to { transform: translateX(0); } }
+
+        /* شريط التنقل */
+        header {
+            background-color: var(--dark);
+            border-bottom: 3px solid var(--gold);
+            position: sticky; top: 0; z-index: 2000;
+        }
+        .nav-container {
+            max-width: 1200px; margin: 0 auto; padding: 10px 20px;
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;
+        }
+        .nav-title { color: var(--gold); font-size: 1.4rem; font-weight: 800; padding: 5px 0; }
+        .nav-links { display: flex; gap: 8px; flex-wrap: wrap; }
+        .nav-links a {
+            color: var(--gold); text-decoration: none; font-weight: 700;
+            padding: 6px 10px; border-radius: 6px; border: 1px solid var(--gold);
+            transition: 0.3s; font-size: 0.75rem;
+        }
+        .nav-links a:hover { background: var(--gold); color: var(--dark); }
+
+        /* البانر المقسم */
+        .slider-section {
+            width: 100%; height: clamp(180px, 35vh, 400px);
+            background-color: #000; overflow: hidden; position: relative;
+        }
+        .slides-wrapper { display: flex; width: 300%; height: 100%; transition: transform 0.8s ease-in-out; }
+        .slide-unit { width: 33.333%; height: 100%; display: flex; }
+        .logo-box {
+            width: 25%; height: 100%; background-color: var(--dark);
+            display: flex; align-items: center; justify-content: center; border-left: 2px solid var(--gold);
+        }
+        .logo-box img { max-width: 85%; max-height: 85%; object-fit: contain; }
+        .image-box { width: 75%; height: 100%; background-size: cover; background-position: center; }
+
+        /* المنيو */
+        .main-layout { max-width: 1200px; margin: 25px auto; padding: 0 15px; }
+        .cat-card { background: var(--white); border-radius: 15px; padding: 20px; margin-bottom: 25px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .cat-title { border-right: 5px solid var(--gold); padding-right: 12px; margin-bottom: 20px; font-size: 1.3rem; }
+        
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
+        .item-box { 
+            background: #fff; border: 1px solid #eee; padding: 15px; border-radius: 12px; 
+            text-align: center; transition: 0.3s; display: flex; flex-direction: column; justify-content: space-between; 
+        }
+        .item-box:hover:not(.unavailable) { border-color: var(--gold); transform: translateY(-3px); }
+        .item-box strong { font-size: 0.85rem; }
+        
+        .item-box.unavailable { opacity: 0.6; background-color: #f9f9f9; border-style: dashed; }
+        .sold-out-text { color: var(--danger); font-weight: bold; font-size: 0.7rem; margin-top: 5px; }
+
+        .btn-add { background: var(--gold); border: none; padding: 8px; border-radius: 50px; font-weight: bold; cursor: pointer; margin-top: 10px; width: 100%; font-family: inherit; font-size: 0.8rem; }
+        .btn-disabled { background: var(--grey); color: white; cursor: not-allowed; }
+
+        /* القائمة في الأسفل */
+        .bottom-cart {
+            background: var(--white); border-radius: 15px; padding: 25px;
+            box-shadow: 0 -4px 15px rgba(0,0,0,0.08); margin: 40px 0; border-top: 4px solid var(--gold);
+        }
+        .bottom-cart h2 { text-align: center; margin-bottom: 15px; font-size: 1.2rem; }
+        .cart-list { list-style: none; max-width: 600px; margin: 0 auto 15px; }
+        .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #f5f5f5; }
+        .item-controls { display: flex; align-items: center; gap: 8px; }
+        .qty-btn { width: 30px; height: 30px; border-radius: 4px; border: 1px solid #ddd; background: #fff; cursor: pointer; font-weight: bold; }
+        .qty-val { font-weight: 800; min-width: 20px; text-align: center; }
+        .btn-del { color: var(--danger); background: none; border: none; cursor: pointer; font-size: 0.75rem; font-weight: bold; text-decoration: underline; }
+
+        .input-group { max-width: 400px; margin: 0 auto; }
+        .input-user { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 12px; font-family: inherit; text-align: center; }
+        .btn-send { width: 100%; padding: 14px; background: var(--whatsapp); color: white; border: none; border-radius: 10px; font-weight: bold; font-size: 1rem; cursor: pointer; }
+
+        /* الفوتر */
+        footer { background: var(--dark); color: white; padding: 30px 15px; text-align: center; }
+        .footer-contacts { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; margin-bottom: 15px; }
+        .contact-box { 
+            background: #3a3a3a; padding: 8px 15px; border-radius: 8px; border: 1px solid #555;
+            display: flex; align-items: center; gap: 10px; font-size: 0.85rem;
+        }
+        .btn-copy { background: var(--gold); color: var(--dark); border: none; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-size: 0.7rem; font-weight: 800; }
+
+        #btn-up { position: fixed; bottom: 20px; right: 20px; width: 40px; height: 40px; background: var(--dark); color: var(--gold); border: 2px solid var(--gold); border-radius: 50%; cursor: pointer; display: none; align-items: center; justify-content: center; z-index: 1000; font-weight: bold; }
+
+        @media (max-width: 600px) {
+            .nav-container { justify-content: center; text-align: center; }
+            .nav-links { margin-top: 5px; }
+            .slide-unit { flex-direction: column; }
+            .logo-box { width: 100%; height: 30%; border-left: none; border-bottom: 2px solid var(--gold); }
+            .image-box { width: 100%; height: 70%; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="notification-container"></div>
+    <button id="btn-up" onclick="window.scrollTo(0,0)">↑</button>
+
+    <header>
+        <div class="nav-container">
+            <div class="nav-title">أسرة خالد بن الوليد</div>
+            <div class="nav-links">
+                <a href="#salty-sec">الأطباق المالحة</a>
+                <a href="#drink-sec">المشروبات</a>
+            </div>
+        </div>
+    </header>
+
+    <section class="slider-section">
+        <div class="slides-wrapper" id="main-slider">
+            <div class="slide-unit">
+                <div class="logo-box"><img src="assets/شعار.png" alt="logo"></div>
+                <div class="image-box" style="background-image: url('assets/1.png');"></div>
+            </div>
+            <div class="slide-unit">
+                <div class="logo-box"><img src="assets/شعار.png" alt="logo"></div>
+                <div class="image-box" style="background-image: url('assets/2.png');"></div>
+            </div>
+            <div class="slide-unit">
+                <div class="logo-box"><img src="assets/شعار.png" alt="logo"></div>
+                <div class="image-box" style="background-image: url('assets/3.png');"></div>
+            </div>
+        </div>
+    </section>
+
+    <div class="main-layout">
+        <div id="salty-sec" class="cat-card">
+            <h2 class="cat-title">الأطباق المالحة</h2>
+            <div class="grid" id="salty-grid"></div>
+        </div>
+
+
+            <div class="grid" id="sweet-grid"></div>
+        </div>
+
+        <div id="drink-sec" class="cat-card">
+            <h2 class="cat-title">المشروبات</h2>
+            <div class="grid" id="drink-grid"></div>
+        </div>
+
+        <div class="bottom-cart">
+            <h2>قائمة طلباتك</h2>
+            <ul id="cart-list" class="cart-list">
+                <li style="border:none; color:#aaa; text-align:center; padding:15px;">القائمة فارغة</li>
+            </ul>
+            <div class="input-group">
+                <input type="text" id="user-name" class="input-user" placeholder="أدخل اسمك الكريم هنا">
+                <button class="btn-send" onclick="sendOrder()">إرسال الطلب عبر واتساب </button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-contacts">
+            <div class="contact-box">
+                جوال: 966540259805+
+                <button class="btn-copy" onclick="copyValue('+966540259805')">نسخ</button>
+            </div>
+        </div>
+        <p>جميع الحقوق محفوظة لأسرة خالد بن الوليد &copy; 2027</p>
+    </footer>
+
+    <script>
+        const saltyData = [
+            { name: "مكبكبة", available: true },
+            { name: "برجر دجاج", available: true },
+        ];
+
+        const sweetData = [
+        ];
+
+        const drinksData = [
+            { name: "عصير موهيتو", available: true },
+        ];
+
+        const saucesData = [
+
+        ];
+
+        let cart = {};
+
+        function showNotify(msg) {
+            const container = document.getElementById('notification-container');
+            const notify = document.createElement('div');
+            notify.className = 'notif';
+            notify.innerText = msg;
+            container.appendChild(notify);
+            setTimeout(() => { notify.remove(); }, 3000);
+        }
+
+        function render(items, id) {
+            const el = document.getElementById(id);
+            items.forEach(obj => {
+                const div = document.createElement('div');
+                div.className = `item-box ${!obj.available ? 'unavailable' : ''}`;
+                let html = `<strong>${obj.name}</strong>`;
+                if(obj.available) {
+                    html += `<button class="btn-add" onclick="add('${obj.name}')">إضافة +</button>`;
+                } else {
+                    html += `<span class="sold-out-text">غير متوفر حالياً</span>`;
+                    html += `<button class="btn-add btn-disabled" disabled>غير متاح</button>`;
+                }
+                div.innerHTML = html;
+                el.appendChild(div);
+            });
+        }
+
+        render(saltyData, 'salty-grid');
+        render(sweetData, 'sweet-grid');
+        render(drinksData, 'drink-grid');
+        render(saucesData, 'sauces-grid');
+
+        function add(n) { 
+            cart[n] = (cart[n] || 0) + 1; 
+            updateUI(); 
+            showNotify(`تمت إضافة ${n}`);
+        }
+        function changeQty(n, a) { if(cart[n]){ cart[n]+=a; if(cart[n]<=0) delete cart[n]; updateUI(); } }
+        function del(n) { delete cart[n]; updateUI(); showNotify(`تم الحذف`); }
+
+        function updateUI() {
+            const list = document.getElementById('cart-list');
+            const keys = Object.keys(cart);
+            list.innerHTML = keys.length ? '' : '<li style="border:none; color:#aaa; text-align:center; padding:15px;">القائمة فارغة</li>';
+            keys.forEach(k => {
+                const li = document.createElement('li');
+                li.className = 'cart-item';
+                li.innerHTML = `<strong style="flex:1">${k}</strong>
+                    <div class="item-controls">
+                        <button class="qty-btn" onclick="changeQty('${k}', 1)">+</button>
+                        <span class="qty-val">${cart[k]}</span>
+                        <button class="qty-btn" onclick="changeQty('${k}', -1)">-</button>
+                        <button class="btn-del" onclick="del('${k}')">حذف</button>
+                    </div>`;
+                list.appendChild(li);
+            });
+        }
+
+        function copyValue(v) { 
+            navigator.clipboard.writeText(v).then(() => showNotify("تم النسخ بنجاح ")); 
+        }
+
+        function sendOrder() {
+            const keys = Object.keys(cart);
+            if (!keys.length) return showNotify("فضلاً، اختر صنفاً أولاً!");
+            const uName = document.getElementById('user-name').value;
+            if (!uName) return showNotify("يرجى كتابة اسمك الكريم");
+
+            let msg = "يا هلا بك يا " + uName + "، استلمنا طلبك بكل حب، وبالهناء والعافية على قلبك.\n\n";
+            msg += "تفاصيل طلبك:\n";
+
+            const check = (data) => data.map(d => d.name);
+
+            const sections = [
+                { title: "\n* الأطباق المالحة:\n", names: check(saltyData) },
+                { title: "\n* المشروبات:\n", names: check(drinksData) },
+            ];
+
+            sections.forEach(sec => {
+                const items = keys.filter(k => sec.names.includes(k));
+                if (items.length) {
+                    msg += sec.title;
+                    items.forEach((k, i) => msg += "  " + (i+1) + ". " + k + " [" + cart[k] + "]\n");
+                }
+            });
+
+            window.open("https://wa.me/966540259805?text=" + encodeURIComponent(msg), '_blank');
+        }
+
+        let idx = 0;
+        setInterval(() => {
+            idx = (idx + 1) % 3;
+            document.getElementById('main-slider').style.transform = `translateX(${idx * 33.333}%)`;
+        }, 5000);
+
+        window.onscroll = () => { document.getElementById("btn-up").style.display = (window.scrollY > 300) ? "flex" : "none"; };
+    </script>
+</body>
+</html>
