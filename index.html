@@ -161,10 +161,6 @@
             <div class="grid" id="salty-grid"></div>
         </div>
 
-
-            <div class="grid" id="sweet-grid"></div>
-        </div>
-
         <div id="drink-sec" class="cat-card">
             <h2 class="cat-title">المشروبات</h2>
             <div class="grid" id="drink-grid"></div>
@@ -189,7 +185,7 @@
                 <button class="btn-copy" onclick="copyValue('+966540259805')">نسخ</button>
             </div>
         </div>
-        <p>جميع الحقوق محفوظة لأسرة خالد بن الوليد &copy; 2027</p>
+        <p>جميع الحقوق محفوظة لأسرة خالد بن الوليد &copy; 2026</p>
     </footer>
 
     <script>
@@ -197,19 +193,10 @@
             { name: "مكبكبة", available: true },
             { name: "برجر دجاج", available: true },
         ];
-
-        const sweetData = [
-        ];
-
-        const drinksData = [
+const drinksData = [
             { name: "عصير موهيتو", available: true },
         ];
-
-        const saucesData = [
-
-        ];
-
-        let cart = {};
+let cart = {};
 
         function showNotify(msg) {
             const container = document.getElementById('notification-container');
@@ -222,6 +209,7 @@
 
         function render(items, id) {
             const el = document.getElementById(id);
+            if (!el) return;
             items.forEach(obj => {
                 const div = document.createElement('div');
                 div.className = `item-box ${!obj.available ? 'unavailable' : ''}`;
@@ -238,9 +226,7 @@
         }
 
         render(saltyData, 'salty-grid');
-        render(sweetData, 'sweet-grid');
         render(drinksData, 'drink-grid');
-        render(saucesData, 'sauces-grid');
 
         function add(n) { 
             cart[n] = (cart[n] || 0) + 1; 
